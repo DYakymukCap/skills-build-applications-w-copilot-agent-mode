@@ -33,13 +33,29 @@ function completedFixture() {
   return root;
 }
 
+function starterFixture() {
+  const root = copyAll();
+  const architecture = path.join(root, 'docs/architecture.md');
+  fs.writeFileSync(architecture, fs.readFileSync(architecture, 'utf8')
+    .replaceAll(/^- (.*(?:decision|approach)):\s*.+$/gm, '- $1:'));
+  for (const model of ['User', 'Team', 'Activity', 'Workout']) {
+    write(root, `octofit-tracker/backend/src/models/${model}.ts`, `import { Schema, model } from 'mongoose';\nconst schema = new Schema({ name: String });\nexport const ${model} = model('${model}', schema);\n`);
+  }
+  write(root, 'octofit-tracker/backend/src/services/octofitService.ts', 'export async function createActivity() { throw new Error("not implemented yet"); }\n');
+  for (const component of ['Activities', 'Teams', 'Leaderboard', 'Workouts']) {
+    write(root, `octofit-tracker/frontend/src/components/${component}.tsx`, `export default function ${component}() { return <h1>${component}</h1>; }\n`);
+  }
+  return root;
+}
+
 test('exercise metadata passes structural and safety validation', () => {
   assert.doesNotThrow(() => validateExercise(repositoryRoot));
 });
 
 test('starter scaffold does not pass learner grading before implementation', () => {
+  const root = starterFixture();
   for (const name of ['step1-architecture', 'step2-data', 'step3-api', 'step4-frontend']) {
-    assert.throws(() => checks[name](repositoryRoot));
+    assert.throws(() => checks[name](root));
   }
 });
 
@@ -213,14 +229,17 @@ test('workflow-level write permissions are rejected', () => {
 
 test('step one requires a completed architecture plan', () => {
   const root = copyAll();
-  assert.throws(() => checks['step1-architecture'](root), /Architecture plan must complete/);
   const architecture = path.join(root, 'docs/architecture.md');
+  fs.writeFileSync(architecture, fs.readFileSync(architecture, 'utf8')
+    .replaceAll(/^- (.*(?:decision|approach)):\s*.+$/gm, '- $1:'));
+  assert.throws(() => checks['step1-architecture'](root), /Architecture plan must complete/);
   fs.writeFileSync(architecture, fs.readFileSync(architecture, 'utf8').replaceAll('decision:', 'decision: keep boundaries clear').replaceAll('approach:', 'approach: implement from tests'));
   assert.doesNotThrow(() => checks['step1-architecture'](root));
 });
 
 test('data grader rejects placeholder seed script', () => {
   const root = copyAll();
+  write(root, 'octofit-tracker/backend/src/scripts/seed.ts', '// TODO: learner seed implementation\nexport async function seed() {}\n');
   assert.throws(() => checks['step2-data'](root), /required validation|placeholder/);
 });
 
