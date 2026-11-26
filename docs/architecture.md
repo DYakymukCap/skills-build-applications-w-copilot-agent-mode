@@ -47,3 +47,4 @@ Record your plan here before editing code.
 - Frontend: `npm test --prefix octofit-tracker/frontend` — passed 15/15. A failure indicates broken API rendering or missing accessible loading, empty, or error states.
 - Backend build: `npm run build --prefix octofit-tracker/backend` — passed. A failure indicates backend TypeScript errors.
 - Frontend build: `npm run build --prefix octofit-tracker/frontend` — passed. A failure indicates frontend TypeScript or production bundling errors.
+- Final composition: `node .github/scripts/grade-step.mjs step5-final` — passed. A failure indicates a tier contract, protected test, or build check needs attention.
