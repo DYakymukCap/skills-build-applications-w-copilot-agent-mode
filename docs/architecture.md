@@ -40,10 +40,10 @@ Record your plan here before editing code.
 
 ## Test plan
 
-Record the commands you run and what each failure means.
-
-- Data-tier command: `npm run test:data --prefix octofit-tracker/backend`
-- API command: `npm run test:api --prefix octofit-tracker/backend`
-- Frontend command: `npm test --prefix octofit-tracker/frontend`
-- Backend build command: `npm run build --prefix octofit-tracker/backend`
-- Frontend build command: `npm run build --prefix octofit-tracker/frontend`
+- Initial baseline: `npm test --prefix octofit-tracker/backend` had 8 failures and 1 pass; `npm test --prefix octofit-tracker/frontend` had 15 failures. These failures showed missing Mongoose validation and API behavior, plus frontend pages that did not fetch or present API data and states.
+- Data tier: `npm run test:data --prefix octofit-tracker/backend` — passed 5/5. A failure indicates a missing model constraint or a seed operation that is not idempotent or does not preserve unrelated records.
+- API: `npm run test:api --prefix octofit-tracker/backend` — passed 4/4. A failure indicates incorrect request validation/status codes, activity creation, team behavior, leaderboard ordering, or workout recommendations.
+- Backend suite: `npm test --prefix octofit-tracker/backend` — passed 9/9. A failure indicates a regression in either data or API contracts.
+- Frontend: `npm test --prefix octofit-tracker/frontend` — passed 15/15. A failure indicates broken API rendering or missing accessible loading, empty, or error states.
+- Backend build: `npm run build --prefix octofit-tracker/backend` — passed. A failure indicates backend TypeScript errors.
+- Frontend build: `npm run build --prefix octofit-tracker/frontend` — passed. A failure indicates frontend TypeScript or production bundling errors.
